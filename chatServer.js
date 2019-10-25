@@ -1,7 +1,7 @@
 /*
 chatServer.js
 Author: David Goedicke (da.goedicke@gmail.com)
-Closley based on work from Nikolas Martelaro (nmartelaro@gmail.com) as well as Captain Anonymous (https://codepen.io/anon/pen/PEVYXz) who forked of an original work by Ian Tairea (https://codepen.io/mrtairea/pen/yJapwv)
+Closley based on work from Nikolas Martelaro (nmartelaro@gmail.com) as well as Captain Anonymous (https://codepen.io/anon/pen/PEVYXz) who forked of an origi$
 */
 
 var express = require('express'); // web server application
@@ -21,17 +21,18 @@ http.listen(serverPort, function() {
 });
 //----------------------------------------------------------------------------//
 
-
 //---------------------- WEBSOCKET COMMUNICATION -----------------------------//
 // this is the websocket event handler and say if someone connects
 // as long as someone is connected, listen for messages
 io.on('connect', function(socket) {
   console.log('a new user connected');
   var questionNum = 0; // keep count of question, used for IF condition.
+  var feeling;
+  var name;
   socket.on('loaded', function() { // we wait until the client has loaded and contacted us that it is ready to go.
 
-    socket.emit('answer', "Hey, hello I am \"___*-\" a simple chat bot example."); //We start with the introduction;
-    setTimeout(timedQuestion, 5000, socket, "What is your name?"); // Wait a moment and respond with a question.
+    socket.emit('answer',"Hey, hello there~ I am Dr.Smita a placebo-therapy bot. I'm not a replacement for a licensed therapist but you can think of me like$
+    setTimeout(timedQuestion, 11000, socket, "What is your name?"); // Wait a moment and respond with a question.
 
   });
   socket.on('message', (data) => { // If we get a new message from the client we process it;
@@ -51,44 +52,38 @@ function bot(data, socket, questionNum) {
 
   /// These are the main statments that make up the conversation.
   if (questionNum == 0) {
-    answer = 'Hello ' + input + ' :-)'; // output response
+    answer = 'Hello ' + input + ' its wonderful to meet you'; // output response
+    name = data;
     waitTime = 5000;
-    question = 'How old are you?'; // load next question
+    question = 'No presure, but remember that what you put in is what you get out. So what brings you here?'; // load next question
   } else if (questionNum == 1) {
-    answer = 'Really, ' + input + ' years old? So that means you were born in: ' + (2018 - parseInt(input)); // output response
-    waitTime = 5000;
-    question = 'Where do you live?'; // load next question
+    answer = 'I see.'; // output response
+    waitTime = 3000;
+    question = 'Can you describe your current mood in one word?'; // load next question
   } else if (questionNum == 2) {
-    answer = 'Cool! I have never been to ' + input + '.';
-    waitTime = 5000;
-    question = 'Whats your favorite color?'; // load next question
+    answer = input + ' huh? Alright.';
+    feeling = input;
+    waitTime = 2000;
+    question = 'How long have you been feeling ' + input.toLowerCase() + '?'; // load next question
   } else if (questionNum == 3) {
-    answer = 'Ok, ' + input + ' it is.';
-    socket.emit('changeBG', input.toLowerCase());
-    waitTime = 5000;
-    question = 'Can you still read the font?'; // load next question
+    answer = 'So you have been feeling ' +feeling+ ' for ' + input ;
+    waitTime = 3000;
+    question = 'Why do you think you are feeling ' + feeling + '?';
   } else if (questionNum == 4) {
-    if (input.toLowerCase() === 'yes' || input === 1) {
-      answer = 'Perfect!';
-      waitTime = 5000;
-      question = 'Whats your favorite place?';
-    } else if (input.toLowerCase() === 'no' || input === 0) {
-      socket.emit('changeFont', 'white'); /// we really should look up the inverse of what we said befor.
-      answer = ''
-      question = 'How about now?';
-      waitTime = 0;
-      questionNum--; // Here we go back in the question number this can end up in a loop
-    } else {
-      question = 'Can you still read the font?'; // load next question
-      answer = 'I did not understand you. Could you please answer "yes" or "no"?'
-      questionNum--;
-      waitTime = 5000;
-    }
-    // load next question
-  } else {
-    answer = 'I have nothing more to say!'; // output response
+    answer = 'I see, so thats why you are feeling ' + feeling+ '. Remember that you are entitled to feel whatever you want; your feelings are valid. I am no$
+    waitTime = 5000;
+    question = 'Well I am glad that you felt you could talk to me about this. What are you looking to get out of this session?';
+  } else if (questionNum == 5){
+    answer = 'I understand. Remember, these sessions are for you -- it is entirely up to you what you want to do'
+    waitTime = 5000;
+    question = 'Lets try a exercise, whats your favorite color right now? Remember there are no wrong answers';
+  } else if (questionNum == 6){
+        answer = 'Ok, ' + input + ' it is. Close your eyes. I want you to imagine ' +input+' all around you. Really concentrate on it. You are surrounded by$
+        waitTime = 13000;
+        question = 'Now write whatever comes to your mind. Just write without thinking -- let your thoughts flow.';
+ }else {
+    answer = 'Well, we are out of time now, but remember '+name+', you deserve to be happy! I shall see you next week.'; // output response
     waitTime = 0;
-    question = '';
   }
 
 
@@ -100,10 +95,15 @@ function bot(data, socket, questionNum) {
 
 function timedQuestion(socket, question) {
   if (question != '') {
-    socket.emit('question', question);
+    socket.emit('question', question);  
   } else {
     //console.log('No Question send!');
   }
 
 }
+//----------------------------------------------------------------------------//
+
+
+
+
 //----------------------------------------------------------------------------//
